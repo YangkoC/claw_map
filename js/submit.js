@@ -114,11 +114,32 @@ var SubmitModule = (function () {
 
   function _initPickerMap() {
     var pickerDiv = document.getElementById('picker-map');
+    var userPos = MapModule.getUserPosition();
+    var center = userPos
+      ? [userPos.longitude, userPos.latitude]
+      : [116.397428, 39.90923];
+    var zoom = userPos ? 14 : 12;
+
     pickerMap = new AMap.Map(pickerDiv, {
-      zoom: 12,
-      center: [116.397428, 39.90923],
-      resizeEnable: false
+      zoom: zoom,
+      center: center,
+      resizeEnable: true
     });
+
+    // 如果没有用户位置，尝试浏览器定位
+    if (!userPos) {
+      pickerMap.plugin('AMap.Geolocation', function () {
+        var geoloc = new AMap.Geolocation({
+          enableHighAccuracy: true,
+          timeout: 8000,
+          buttonPosition: 'RB',
+          buttonOffset: new AMap.Pixel(10, 10),
+          zoomToAccuracy: true
+        });
+        pickerMap.addControl(geoloc);
+        geoloc.getCurrentPosition();
+      });
+    }
 
     pickerMap.on('click', function (e) {
       var lng = e.lnglat.getLng();
@@ -345,6 +366,7 @@ var SubmitModule = (function () {
         var userPos = MapModule.getUserPosition();
         if (userPos) {
           pickerMap.setCenter([userPos.longitude, userPos.latitude]);
+          pickerMap.setZoom(14);
         }
         if (pickerMarker) {
           pickerMarker.setMap(null);
