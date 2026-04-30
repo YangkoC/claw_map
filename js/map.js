@@ -67,7 +67,6 @@ var MapModule = (function () {
         map = new AMap.Map(cfg.mapContainerId, {
           zoom: 13,
           center: [116.397428, 39.90923],
-          mapStyle: 'amap://styles/light',
           resizeEnable: true
         });
 
