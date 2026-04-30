@@ -1,0 +1,590 @@
+/* ====== 全局重置 ====== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 16px;
+  color: #333;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ====== 加载层 ====== */
+#loading-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255,255,255,0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e0e0e0;
+  border-top-color: #4CAF50;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+#loading-overlay p {
+  margin-top: 12px;
+  color: #999;
+  font-size: 14px;
+}
+
+/* ====== 应用容器 ====== */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+}
+
+/* ====== 顶部搜索栏 ====== */
+.search-bar {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  z-index: 100;
+  flex-shrink: 0;
+}
+
+.search-bar input {
+  flex: 1;
+  height: 36px;
+  border: 1px solid #ddd;
+  border-radius: 18px;
+  padding: 0 36px 0 14px;
+  font-size: 14px;
+  outline: none;
+  background: #f5f5f5;
+  transition: background 0.2s;
+}
+
+.search-bar input:focus {
+  background: #fff;
+  border-color: #4CAF50;
+}
+
+.search-icon {
+  margin-left: -28px;
+  font-size: 14px;
+  color: #999;
+  pointer-events: none;
+}
+
+/* ====== 内容区 ====== */
+.content-area {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+#map-container {
+  width: 100%;
+  height: 100%;
+}
+
+#list-container {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  display: none;
+  background: #f8f8f8;
+}
+
+/* ====== 钓点列表 ====== */
+#list-loading {
+  display: none;
+  text-align: center;
+  padding: 20px;
+  color: #999;
+  font-size: 14px;
+}
+
+.list-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.spot-item {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  background: #fff;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.spot-item:active,
+.spot-item.active {
+  background: #e8f5e9;
+}
+
+.spot-item-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.spot-item-name {
+  display: block;
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spot-item-addr {
+  display: block;
+  font-size: 12px;
+  color: #999;
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spot-item-distance {
+  flex-shrink: 0;
+  margin-left: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #4CAF50;
+  white-space: nowrap;
+}
+
+/* ====== 底部标签栏 ====== */
+.tab-bar {
+  display: flex;
+  background: #fff;
+  border-top: 1px solid #eee;
+  flex-shrink: 0;
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+  color: #999;
+  font-size: 11px;
+  cursor: pointer;
+  transition: color 0.2s;
+  border: none;
+  background: none;
+}
+
+.tab .tab-icon {
+  font-size: 22px;
+  margin-bottom: 2px;
+  line-height: 1;
+}
+
+.tab.active {
+  color: #4CAF50;
+  font-weight: 500;
+}
+
+/* ====== 地图信息窗体 ====== */
+.info-window {
+  max-width: 260px;
+  padding: 4px;
+}
+
+.info-name {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.info-distance {
+  font-size: 13px;
+  color: #4CAF50;
+  margin-left: 8px;
+  font-weight: 500;
+}
+
+.info-address {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.info-desc {
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+
+.info-contact {
+  font-size: 12px;
+  color: #1976D2;
+  margin-bottom: 6px;
+}
+
+.info-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.info-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #e8f5e9;
+  color: #2E7D32;
+  border-radius: 10px;
+  font-size: 11px;
+}
+
+.info-images {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+}
+
+.info-img {
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* ====== 提交表单浮层 ====== */
+.submit-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: flex-end;
+  z-index: 9998;
+}
+
+.submit-panel {
+  width: 100%;
+  max-height: 90vh;
+  background: #fff;
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.submit-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+  flex-shrink: 0;
+}
+
+.submit-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.submit-close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #999;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 4px;
+}
+
+.submit-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+}
+
+.submit-footer {
+  display: flex;
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 1px solid #eee;
+  flex-shrink: 0;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom, 0));
+}
+
+/* ====== 表单元素 ====== */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #555;
+}
+
+.required {
+  color: #f44336;
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+
+.form-group input[type="text"]:focus,
+.form-group textarea:focus {
+  border-color: #4CAF50;
+}
+
+.form-hint {
+  font-size: 12px;
+  color: #999;
+  margin-top: 4px;
+}
+
+/* ====== 位置选择器 ====== */
+.location-picker {
+  position: relative;
+}
+
+#spot-search {
+  margin-bottom: 8px;
+}
+
+.search-results {
+  position: absolute;
+  top: 42px;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.no-result {
+  padding: 10px;
+  color: #999;
+  font-size: 13px;
+  text-align: center;
+}
+
+.search-result-item {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item:active {
+  background: #f0f0f0;
+}
+
+.poi-name {
+  display: block;
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.poi-addr {
+  display: block;
+  font-size: 12px;
+  color: #999;
+  margin-top: 2px;
+}
+
+.location-hint {
+  font-size: 12px;
+  color: #999;
+  text-align: center;
+  margin-top: 4px;
+}
+
+.selected-location {
+  font-size: 13px;
+  color: #4CAF50;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+.picker-map {
+  width: 100%;
+  height: 220px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  margin-top: 8px;
+}
+
+/* ====== 标签选择 ====== */
+.tag-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tag-options label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #555;
+  cursor: pointer;
+}
+
+.tag-options input[type="checkbox"] {
+  accent-color: #4CAF50;
+}
+
+/* ====== 图片预览 ====== */
+.image-preview {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.preview-thumb {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+/* ====== 按钮 ====== */
+.btn {
+  flex: 1;
+  height: 44px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn:active {
+  opacity: 0.7;
+}
+
+.btn-primary {
+  background: #4CAF50;
+  color: #fff;
+}
+
+.btn-cancel {
+  background: #f0f0f0;
+  color: #666;
+}
+
+/* ====== 消息提示 ====== */
+.submit-message {
+  text-align: center;
+  padding: 8px 20px;
+  font-size: 13px;
+}
+
+.submit-message.success {
+  color: #4CAF50;
+}
+
+.submit-message.error {
+  color: #f44336;
+}
+
+.submit-message.info {
+  color: #1976D2;
+}
+
+/* ====== Toast ====== */
+.toast-error {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  z-index: 10000;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.toast-error.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* ====== AMap 控件微调 ====== */
+.amap-geolocation-con {
+  bottom: 70px !important;
+  right: 10px !important;
+}
+
+/* ====== 高德 AutoComplete 建议面板 z-index 修复 ====== */
+.amap-suggest {
+  z-index: 10001 !important;
+}
+
+/* ====== 微信浏览器适配 ====== */
+@media screen and (max-width: 414px) {
+  .info-window {
+    max-width: 220px;
+  }
+}
